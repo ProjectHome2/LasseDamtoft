@@ -10,7 +10,7 @@ which(vand == 1)
 vand2 = home[which(vand == 1),]
 head(vand2)
 vand2
-
+awe a
 plot(home[, "Postnr"], home[, "Kontantpris"])
 
 postpris = home[, c("Postnr", "Kontantpris")]
