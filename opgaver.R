@@ -55,7 +55,7 @@ points(coef(lm.fit_9)[2],coef(lm.fit)[8])
 points(coef(lm.fit_10)[2],coef(lm.fit)[9])
 
 
-k = 1
+k = 5
 
 k = k + 1
 lm.nice = lm(price ~ home[,k] + I(home[,k]^2) + I(home[,k]^3), data = home)
@@ -123,26 +123,8 @@ mean((ridge.pred -y.test)^2)
 
 #runing ridge on whole data set
 out=glmnet(x,y,alpha =0)
-predict(out ,type="coefficients",s=bestlam )[1:30 ,]
+predict(out ,type="coefficients",s=bestlam )[1:28 ,]
 
-
-
-
-# LASSO
-
-lasso.mod =glmnet (x[train ,],y[train],alpha =1, lambda =grid)
-plot(lasso.mod)
-#Best lambda for lasso
-cv.out =cv.glmnet (x[train ,],y[train],alpha =1)
-plot(cv.out)
-bestlam =cv.out$lambda.min
-#Lasso MSE
-lasso.pred=predict (lasso.mod ,s=bestlam ,newx=x[test ,])
-mean(( lasso.pred -y.test)^2)
-
-out=glmnet (x,y,alpha =1, lambda =grid)
-lasso.coef=predict (out ,type ="coefficients",s=bestlam )[1:30,]
-lasso.coef
 
 
 

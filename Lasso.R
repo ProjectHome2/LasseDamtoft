@@ -50,7 +50,7 @@ out=glmnet(x,y,alpha =0)
 predict(out ,type="coefficients",s=bestlam )[1:28 ,]
 
 
-
+cv.out
 
 # LASSO
 
@@ -71,10 +71,21 @@ lasso.coef[lasso.coef !=0]
 
 
 
-
-
-
-
+as = seq(0, 1, length.out = 20)
+bestlams = c()
+best1ses = c()
+for (alp in as) {
+  tral = cv.glmnet(x[train ,], y[train], alpha = alp)
+  mod.lol = glmnet(x[train ,], y[train], alpha = alp, lambda = grid)
+  bestlam = tral$lambda.min
+  best1se = tral$lambda.1se
+  pred.best = predict (mod.lol ,s=bestlam ,newx=x[test ,])
+  pred.1se = predict (mod.lol ,s=best1se ,newx=x[test ,])
+  bestlams = c(bestlams, mean((pred.best - y.test)^2))
+  best1ses = c(best1ses, mean((pred.1se - y.test)^2))
+}
+plot(as, best1ses, ylim = c(0.046, 0.0525), type = "l")
+lines(as, bestlams, type = "l")
 
 
 
