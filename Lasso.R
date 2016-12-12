@@ -24,7 +24,7 @@ train=sample (1: nrow(x), 0.75* nrow(x))
 test=(- train )
 y.test=y[test]
 #run ridge on the training set
-ridge.mod =glmnet (x[train ,],y[train],alpha =0, lambda =grid ,thresh =1e-12)
+ridge.mod =glmnet (x[train ,],y[train],alpha =0, lambda =lambdas ,thresh =1e-12)
 #defines the ridge predicted values
 
 ridge.pred=predict (ridge.mod ,s=4, newx=x[test,])
@@ -56,7 +56,7 @@ cv.out
 
 # LASSO
 
-lasso.mod =glmnet (x[train ,],y[train],alpha =1, lambda =grid)
+lasso.mod =glmnet (x[train ,],y[train],alpha =1, lambda =lambdas)
 plot(lasso.mod)
 #Best lambda for lasso
 cv.out =cv.glmnet (x[train ,],y[train],alpha =1)
@@ -66,7 +66,7 @@ bestlam =cv.out$lambda.min
 lasso.pred=predict (lasso.mod ,s=bestlam ,newx=x[test ,])
 mean(( lasso.pred -y.test)^2)
 
-out=glmnet (x,y,alpha =1, lambda =grid)
+out=glmnet (x,y,alpha =1, lambda =lambdas)
 lasso.coef=predict (out ,type ="coefficients",s=bestlam )[1:28,]
 lasso.coef
 lasso.coef[lasso.coef !=0]
@@ -88,7 +88,7 @@ for (alp in as) {
 }
 
 alphas[which.min(bestlams)]
-out=glmnet (x,y,alpha =as[2], lambda =grid)
+out=glmnet (x,y,alpha =as[2], lambda =lambdas)
 lasso.coef=predict (out ,type ="coefficients",s=bestlams[2] )[1:28,]
 lasso.coef
 lasso.coef[lasso.coef !=0]
@@ -106,7 +106,7 @@ bestlams = c()
 best1ses = c()
 for (alp in alphas) {
   cv.mod = cv.glmnet(x[train,], y[train], alpha = alp)
-  mod.lol = glmnet(x[train,], y[train], alpha = alp, lambda = grid)
+  mod.lol = glmnet(x[train,], y[train], alpha = alp, lambda = lambdas)
   bestlam = cv.mod$lambda.min
   best1se = cv.mod$lambda.1se
   pred.best = predict (mod.lol, s = bestlam, newx = x[train,])
@@ -169,5 +169,30 @@ model[model != 0]
 
 elastic.mod.1se = glmnet(x[train,], y[train], alpha = 
                            best.mod.1se["Best alpha.1se"], lambda = best.mod.1se["Best lambda.1se"])
-model.1se = predict(elastic.mod.1se, type = "coefficients")[1:28]
+model.1se = predict(elastic.mod.1se, lam)
+
+
+x = model.matrix (y~. + LivingArea:NumberOfBedrooms + LivingArea:PostalCode + Condition:PostalCode + LivingArea:BasementArea + log(LivingArea) + sqrt(BasementArea),data = data.matrix)[,-1]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+predict(mod.lol, s = bestlam, newx = x[train,])
 model.1se[model.1se != 0]
